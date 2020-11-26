@@ -1,11 +1,7 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace FacilityManager.EntityFramework.Models
 {
-
-    [Table("Facilities", Schema = "dbo")]
     public class Facility : Entity
     {
         [Required]
