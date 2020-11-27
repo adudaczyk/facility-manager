@@ -38,7 +38,7 @@ namespace FacilityManager.Api.Controllers
             }
         }
 
-        [Authorize(Roles = Role.Admin)]
+        [AllowAnonymous]
         [HttpGet("get-users")]
         public async Task<IActionResult> GetUsers()
         {

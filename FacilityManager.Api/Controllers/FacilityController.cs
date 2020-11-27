@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using FacilityManager.BusinessLogic.Models;
 using FacilityManager.BusinessLogic.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FacilityManager.Api.Controllers
 {
@@ -18,6 +19,7 @@ namespace FacilityManager.Api.Controllers
             _facilityService = facilityService;
         }
 
+        [AllowAnonymous]
         [HttpGet("get-facilities")]
         public async Task<IEnumerable<FacilityDto>> GetFacilities()
         {

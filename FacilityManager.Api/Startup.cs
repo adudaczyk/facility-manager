@@ -41,7 +41,7 @@ namespace FacilityManager.Api
 
             services.AddAutoMapper(typeof(DaoToDtoProfile).Assembly);
 
-            AddAuthentication(services);
+            // AddAuthentication(services);
 
             services.RegisterServices();
             services.RegisterRepositories();
