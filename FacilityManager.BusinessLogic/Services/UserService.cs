@@ -150,6 +150,13 @@ namespace FacilityManager.BusinessLogic.Services
             await _userRepository.SaveChangesAsync();
         }
 
+        public async Task<bool> EmailLookup(string email)
+        {
+            var user = await _userRepository.GetByEmail(email);
+
+            return user != null ? true : false;
+        }
+
         private static void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
         {
             if (password == null) throw new ArgumentNullException("password");

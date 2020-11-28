@@ -14,5 +14,6 @@ namespace FacilityManager.BusinessLogic.Services
         Task SendResetPasswordLink(string email);
         Task ResetPassword(UserDto userDto);
         Task VerifyEmail(UserDto userDto);
+        Task<bool> EmailLookup(string email);
     }
 }

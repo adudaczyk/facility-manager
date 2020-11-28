@@ -102,11 +102,11 @@ namespace FacilityManager.Api.Controllers
 
         [AllowAnonymous]
         [HttpPost("send-reset-password-link")]
-        public async Task<IActionResult> SendResetPasswordLink([FromBody] UserDto userDto)
+        public async Task<IActionResult> SendResetPasswordLink(string email)
         {
             try
             {
-                await _userService.SendResetPasswordLink(userDto.Email);
+                await _userService.SendResetPasswordLink(email);
                 return Ok();
             }
             catch (Exception ex)
@@ -123,6 +123,21 @@ namespace FacilityManager.Api.Controllers
             {
                 await _userService.ResetPassword(userDto);
                 return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpPost("email-lookup")]
+        public async Task<IActionResult> EmailLookup(string email)
+        {
+            try
+            {
+                var isEmailExisted = await _userService.EmailLookup(email);
+                return Ok(isEmailExisted);
             }
             catch (Exception ex)
             {
