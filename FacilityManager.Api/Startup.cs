@@ -68,7 +68,7 @@ namespace FacilityManager.Api
 
             app.UseRouting();
 
-            app.UseCors();
+            app.UseCors("CorsPolicy");
 
             app.UseAuthorization();
 
