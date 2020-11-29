@@ -60,8 +60,8 @@ namespace FacilityManager.BusinessLogic.Services
             _userRepository.Add(user);
             await _userRepository.SaveChangesAsync();
 
-            var emailHelper = new EmailHelper(_configuration);
-            emailHelper.SendUserVerificationEmail(user.Email, user.VerificationEmailToken);
+            // var emailHelper = new EmailHelper(_configuration);
+            // emailHelper.SendUserVerificationEmail(user.Email, user.VerificationEmailToken);
         }
 
         public async Task UpdateUser(UserDto userDto)
