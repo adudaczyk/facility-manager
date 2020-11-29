@@ -37,9 +37,9 @@ namespace FacilityManager.Api.Controllers
         }
 
         [HttpPost]
-        public async Task AddFacility([FromBody] FacilityDto facilityDto)
+        public async Task CreateFacility([FromBody] FacilityDto facilityDto)
         {
-            await _facilityService.AddFacility(facilityDto);
+            await _facilityService.CreateFacility(facilityDto);
         }
 
         [HttpPut("{guid}")]

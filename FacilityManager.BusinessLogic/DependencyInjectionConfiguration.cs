@@ -10,6 +10,8 @@ namespace FacilityManager.BusinessLogic
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IFacilityService, FacilityService>();
+            services.AddScoped<ISubfacilityService, SubfacilityService>();
+            services.AddScoped<IOccupancyService, OccupancyService>();
         }
     }
 }

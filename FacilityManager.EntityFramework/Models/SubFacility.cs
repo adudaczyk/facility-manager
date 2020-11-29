@@ -2,9 +2,9 @@
 
 namespace FacilityManager.EntityFramework.Models
 {
-    public class Facility : Entity
+    public class Subfacility : Entity
     {
         public string Name { get; set; }
-        public List<Subfacility> Subfacilities { get; set; }
+        public List<Occupancy> Occupancies {get; set; }
     }
 }

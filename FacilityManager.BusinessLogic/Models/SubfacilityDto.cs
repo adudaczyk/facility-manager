@@ -2,9 +2,9 @@
 
 namespace FacilityManager.BusinessLogic.Models
 {
-    public class FacilityDto : EntityDto
+    public class SubfacilityDto : EntityDto
     {
         public string Name { get; set; }
-        public List<SubfacilityDto> Subfacilities { get; set; }
+        public List<OccupancyDto> Occupancies { get; set; }
     }
 }

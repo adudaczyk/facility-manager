@@ -7,6 +7,8 @@ namespace FacilityManager.EntityFramework
     {
         public DbSet<Account> Account { get; set; }
         public DbSet<Facility> Facility { get; set; }
+        public DbSet<Subfacility> Subfacility { get; set; }
+        public DbSet<Occupancy> Occupancy { get; set; }
 
         public FacilityManagerDbContext(DbContextOptions<FacilityManagerDbContext> options)
             : base(options)

@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FacilityManager.EntityFramework.Migrations
 {
     [DbContext(typeof(FacilityManagerDbContext))]
-    [Migration("20201129173323_InitialCreate")]
+    [Migration("20201129182511_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -76,12 +76,71 @@ namespace FacilityManager.EntityFramework.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.ToTable("Facility");
+                });
+
+            modelBuilder.Entity("FacilityManager.EntityFramework.Models.Occupancy", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .UseIdentityColumn();
+
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("Guid")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long?>("SubfacilityId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SubfacilityId");
+
+                    b.ToTable("Occupancy");
+                });
+
+            modelBuilder.Entity("FacilityManager.EntityFramework.Models.Subfacility", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .UseIdentityColumn();
+
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<long?>("FacilityId")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("Guid")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FacilityId");
+
+                    b.ToTable("Subfacility");
                 });
 
             modelBuilder.Entity("FacilityManager.EntityFramework.Models.Account", b =>
@@ -128,6 +187,30 @@ namespace FacilityManager.EntityFramework.Migrations
                         });
 
                     b.Navigation("RefreshTokens");
+                });
+
+            modelBuilder.Entity("FacilityManager.EntityFramework.Models.Occupancy", b =>
+                {
+                    b.HasOne("FacilityManager.EntityFramework.Models.Subfacility", null)
+                        .WithMany("Occupancies")
+                        .HasForeignKey("SubfacilityId");
+                });
+
+            modelBuilder.Entity("FacilityManager.EntityFramework.Models.Subfacility", b =>
+                {
+                    b.HasOne("FacilityManager.EntityFramework.Models.Facility", null)
+                        .WithMany("Subfacilities")
+                        .HasForeignKey("FacilityId");
+                });
+
+            modelBuilder.Entity("FacilityManager.EntityFramework.Models.Facility", b =>
+                {
+                    b.Navigation("Subfacilities");
+                });
+
+            modelBuilder.Entity("FacilityManager.EntityFramework.Models.Subfacility", b =>
+                {
+                    b.Navigation("Occupancies");
                 });
 #pragma warning restore 612, 618
         }

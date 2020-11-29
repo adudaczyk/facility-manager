@@ -33,7 +33,7 @@ namespace FacilityManager.BusinessLogic.Services
             return _mapper.Map<FacilityDto>(facility);
         }
 
-        public async Task AddFacility(FacilityDto facilityDto)
+        public async Task CreateFacility(FacilityDto facilityDto)
         {
             var facility = _mapper.Map<Facility>(facilityDto);
 

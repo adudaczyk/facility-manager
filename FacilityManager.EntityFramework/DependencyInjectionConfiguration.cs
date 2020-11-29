@@ -9,6 +9,8 @@ namespace FacilityManager.EntityFramework
         {
             services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddScoped<IFacilityRepository, FacilityRepository>();
+            services.AddScoped<ISubfacilityRepository, SubfacilityRepository>();
+            services.AddScoped<IOccupancyRepository, OccupancyRepository>();
         }
     }
 }
