@@ -7,7 +7,7 @@ namespace FacilityManager.EntityFramework
     {
         public static void RegisterRepositories(this IServiceCollection services)
         {
-            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddScoped<IFacilityRepository, FacilityRepository>();
         }
     }

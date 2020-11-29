@@ -16,12 +16,12 @@ namespace FacilityManager.BusinessLogic.Services
 {
     public class AuthService : IAuthService
     {
-        private readonly IUserRepository _userRepository;
+        private readonly IAccountRepository _accountRepository;
         private readonly IConfiguration _configuration;
 
-        public AuthService(IUserRepository userRepository, IConfiguration configuration)
+        public AuthService(IAccountRepository accountRepository, IConfiguration configuration)
         {
-            _userRepository = userRepository;
+            _accountRepository = accountRepository;
             _configuration = configuration;
         }
 
@@ -29,32 +29,32 @@ namespace FacilityManager.BusinessLogic.Services
         {
             if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password)) return null;
 
-            var user = await _userRepository.GetByEmail(email);
+            var account = await _accountRepository.GetByEmail(email);
 
-            if (user == null) return null;
-            if (!VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt)) return null;
+            if (account == null) return null;
+            if (!VerifyPasswordHash(password, account.PasswordHash, account.PasswordSalt)) return null;
 
             // authentication successful so generate jwt and refresh tokens
-            var jwtToken = generateJwtToken(user);
+            var jwtToken = generateJwtToken(account);
             var refreshToken = generateRefreshToken(ipAddress);
 
             // save refresh token
-            user.RefreshTokens.Add(refreshToken);
+            account.RefreshTokens.Add(refreshToken);
 
-            _userRepository.Update(user);
-            await _userRepository.SaveChangesAsync();
+            _accountRepository.Update(account);
+            await _accountRepository.SaveChangesAsync();
 
-            return new AuthenticateResponse(user.Email, jwtToken, refreshToken.Token);
+            return new AuthenticateResponse(account.Email, jwtToken, refreshToken.Token);
         }
 
         public async Task<AuthenticateResponse> RefreshToken(string token, string ipAddress)
         {
-            var user = await _userRepository.GetByRefreshToken(token);
+            var account = await _accountRepository.GetByRefreshToken(token);
 
-            // return null if no user found with token
-            if (user == null) return null;
+            // return null if no account found with token
+            if (account == null) return null;
 
-            var refreshToken = user.RefreshTokens.Single(x => x.Token == token);
+            var refreshToken = account.RefreshTokens.Single(x => x.Token == token);
 
             // return null if token is no longer active
             if (!refreshToken.IsActive) return null;
@@ -64,25 +64,25 @@ namespace FacilityManager.BusinessLogic.Services
             refreshToken.Revoked = DateTime.UtcNow;
             refreshToken.RevokedByIp = ipAddress;
             refreshToken.ReplacedByToken = newRefreshToken.Token;
-            user.RefreshTokens.Add(newRefreshToken);
+            account.RefreshTokens.Add(newRefreshToken);
 
-            _userRepository.Update(user);
-            await _userRepository.SaveChangesAsync();
+            _accountRepository.Update(account);
+            await _accountRepository.SaveChangesAsync();
 
             // generate new jwt
-            var jwtToken = generateJwtToken(user);
+            var jwtToken = generateJwtToken(account);
 
-            return new AuthenticateResponse(user.Email, jwtToken, refreshToken.Token);
+            return new AuthenticateResponse(account.Email, jwtToken, refreshToken.Token);
         }
 
         public async Task<bool> RevokeToken(string token, string ipAddress)
         {
-            var user = await _userRepository.GetByRefreshToken(token);
+            var account = await _accountRepository.GetByRefreshToken(token);
 
-            // return false if no user found with token
-            if (user == null) return false;
+            // return false if no account found with token
+            if (account == null) return false;
 
-            var refreshToken = user.RefreshTokens.Single(x => x.Token == token);
+            var refreshToken = account.RefreshTokens.Single(x => x.Token == token);
 
             // return false if token is not active
             if (!refreshToken.IsActive) return false;
@@ -91,22 +91,22 @@ namespace FacilityManager.BusinessLogic.Services
             refreshToken.Revoked = DateTime.UtcNow;
             refreshToken.RevokedByIp = ipAddress;
 
-            _userRepository.Update(user);
-            await _userRepository.SaveChangesAsync();
+            _accountRepository.Update(account);
+            await _accountRepository.SaveChangesAsync();
 
             return true;
         }
 
-        private string generateJwtToken(User user)
+        private string generateJwtToken(Account account)
         {
             var key = Encoding.ASCII.GetBytes(_configuration["SecretToken"]);
 
             var claims = new List<Claim>()
             {
-                new Claim(ClaimTypes.Name, user.Guid.ToString())
+                new Claim(ClaimTypes.Name, account.Guid.ToString())
             };
 
-            foreach (var role in user.Roles.Split(';'))
+            foreach (var role in account.Roles.Split(';'))
             {
                 claims.Add(new Claim(ClaimTypes.Role, role));
             }

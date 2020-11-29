@@ -13,7 +13,7 @@ namespace FacilityManager.BusinessLogic.Helpers
         {
             _configuration = configuration;
         }
-        public void SendUserVerificationEmail(string email, string token)
+        public void SendAccountVerificationEmail(string email, string token)
         {
             var subject = "Facility Manager - Verification Link";
             var link = _configuration["FacilityManagerLink"]

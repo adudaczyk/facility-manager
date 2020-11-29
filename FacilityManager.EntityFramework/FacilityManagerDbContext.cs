@@ -5,7 +5,7 @@ namespace FacilityManager.EntityFramework
 {
     public class FacilityManagerDbContext : DbContext
     {
-        public DbSet<User> User { get; set; }
+        public DbSet<Account> Account { get; set; }
         public DbSet<Facility> Facility { get; set; }
 
         public FacilityManagerDbContext(DbContextOptions<FacilityManagerDbContext> options)

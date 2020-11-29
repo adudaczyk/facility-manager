@@ -8,7 +8,7 @@ namespace FacilityManager.BusinessLogic
         public static void RegisterServices(this IServiceCollection services)
         {
             services.AddScoped<IAuthService, AuthService>();
-            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IFacilityService, FacilityService>();
         }
     }

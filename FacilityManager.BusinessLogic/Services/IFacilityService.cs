@@ -8,8 +8,8 @@ namespace FacilityManager.BusinessLogic.Services
     {
         Task<IEnumerable<FacilityDto>> GetFacilities();
         Task<FacilityDto> GetFacility(string guid);
-        Task AddFacility(FacilityDto userDto);
-        Task UpdateFacility(FacilityDto userDto);
+        Task AddFacility(FacilityDto facilityDto);
+        Task UpdateFacility(FacilityDto facilityDto);
         Task DeleteFacility(string guid);
     }
 }

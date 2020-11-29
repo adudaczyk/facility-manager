@@ -12,24 +12,24 @@ namespace FacilityManager.Api.Controllers
     [Authorize]
     [ApiController]
     [Route("api/[controller]")]
-    public class UserController : ControllerBase
+    public class AccountController : ControllerBase
     {
-        private readonly IUserService _userService;
+        private readonly IAccountService _accountService;
         private readonly IConfiguration _configuration;
 
-        public UserController(IUserService userService, IConfiguration configuration)
+        public AccountController(IAccountService accountService, IConfiguration configuration)
         {
-            _userService = userService;
+            _accountService = accountService;
             _configuration = configuration;
         }
 
         [AllowAnonymous]
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] UserDto userDto)
+        public async Task<IActionResult> Register([FromBody] AccountDto accountDto)
         {
             try
             {
-                await _userService.AddUser(userDto);
+                await _accountService.CreateAccount(accountDto);
                 return Ok();
             }
             catch (Exception ex)
@@ -39,29 +39,29 @@ namespace FacilityManager.Api.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet("get-users")]
-        public async Task<IActionResult> GetUsers()
+        [HttpGet("get-accounts")]
+        public async Task<IActionResult> GetAccounts()
         {
-            var allUsers = await _userService.GetUsers();
+            var allAccounts = await _accountService.GetAccounts();
 
-            return Ok(allUsers);
+            return Ok(allAccounts);
         }
 
         [HttpGet("{guid}")]
-        public async Task<IActionResult> GetUser(string guid)
+        public async Task<IActionResult> GetAccount(string guid)
         {
-            var user = await _userService.GetUser(guid);
+            var account = await _accountService.GetAccount(guid);
 
-            return Ok(user);
+            return Ok(account);
         }
 
         [HttpPut("{guid}")]
-        public async Task<IActionResult> UpdateUser(string guid, [FromBody] UserDto userDto)
+        public async Task<IActionResult> UpdateAccount(string guid, [FromBody] AccountDto accountDto)
         {
-            userDto.Guid = new Guid(guid);
+            accountDto.Guid = new Guid(guid);
             try
             {
-                await _userService.UpdateUser(userDto);
+                await _accountService.UpdateAccount(accountDto);
                 return Ok();
             }
             catch (Exception ex)
@@ -72,11 +72,11 @@ namespace FacilityManager.Api.Controllers
 
         [Authorize(Roles = Role.Admin)]
         [HttpDelete("{guid}")]
-        public async Task<IActionResult> DeleteUser(string guid)
+        public async Task<IActionResult> DeleteAccount(string guid)
         {
             try
             {
-                await _userService.DeleteUser(guid);
+                await _accountService.DeleteAccount(guid);
                 return Ok();
             }
             catch (Exception ex)
@@ -87,11 +87,11 @@ namespace FacilityManager.Api.Controllers
 
         [AllowAnonymous]
         [HttpPost("verify-email")]
-        public async Task<IActionResult> VerifyEmail([FromBody] UserDto userDto)
+        public async Task<IActionResult> VerifyEmail([FromBody] AccountDto accountDto)
         {
             try
             {
-                await _userService.VerifyEmail(userDto);
+                await _accountService.VerifyEmail(accountDto);
                 return Ok();
             }
             catch (Exception ex)
@@ -106,7 +106,7 @@ namespace FacilityManager.Api.Controllers
         {
             try
             {
-                await _userService.SendResetPasswordLink(email);
+                await _accountService.SendResetPasswordLink(email);
                 return Ok();
             }
             catch (Exception ex)
@@ -117,11 +117,11 @@ namespace FacilityManager.Api.Controllers
 
         [AllowAnonymous]
         [HttpPost("reset-password")]
-        public async Task<IActionResult> ResetPassword([FromBody] UserDto userDto)
+        public async Task<IActionResult> ResetPassword([FromBody] AccountDto accountDto)
         {
             try
             {
-                await _userService.ResetPassword(userDto);
+                await _accountService.ResetPassword(accountDto);
                 return Ok();
             }
             catch (Exception ex)
@@ -136,7 +136,7 @@ namespace FacilityManager.Api.Controllers
         {
             try
             {
-                var isEmailExisted = await _userService.EmailLookup(email);
+                var isEmailExisted = await _accountService.EmailLookup(email);
                 return Ok(isEmailExisted);
             }
             catch (Exception ex)

@@ -9,9 +9,9 @@ namespace FacilityManager.BusinessLogic.Mappers
     {
         public DaoToDtoProfile()
         {
-            CreateMap<User, UserDto>()
-                .AfterMap((dto, userDto) => userDto.Roles = dto.Roles.Split(';').ToList());
-            CreateMap<UserDto, User>()
+            CreateMap<Account, AccountDto>()
+                .AfterMap((dto, accountDto) => accountDto.Roles = dto.Roles.Split(';').ToList());
+            CreateMap<AccountDto, Account>()
                 .ForMember(x => x.Roles, opt => opt.MapFrom(src => string.Join(";", src.Roles)));
 
             CreateMap<Facility, FacilityDto>();

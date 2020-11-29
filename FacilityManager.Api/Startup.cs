@@ -96,12 +96,12 @@ namespace FacilityManager.Api
                 {
                     OnTokenValidated = async context =>
                     {
-                        var userService = context.HttpContext.RequestServices.GetRequiredService<IUserService>();
-                        var user = await userService.GetUser(context.Principal.Identity.Name);
+                        var accountService = context.HttpContext.RequestServices.GetRequiredService<IAccountService>();
+                        var account = await accountService.GetAccount(context.Principal.Identity.Name);
 
-                        if (user == null)
+                        if (account == null)
                         {
-                            // return unauthorized if user no longer exists
+                            // return unauthorized if account no longer exists
                             context.Fail("Unauthorized");
                         }
                     }

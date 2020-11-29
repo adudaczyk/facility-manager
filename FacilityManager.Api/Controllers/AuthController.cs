@@ -13,29 +13,29 @@ namespace FacilityManager.Api.Controllers
     [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
-        private readonly IUserService _userService;
+        private readonly IAccountService _accountService;
         private readonly IAuthService _authService;
 
-        public AuthController(IUserService userService, IAuthService authService)
+        public AuthController(IAccountService accountService, IAuthService authService)
         {
-            _userService = userService;
+            _accountService = accountService;
             _authService = authService;
         }
 
         [AllowAnonymous]
         [HttpPost("authenticate")]
-        public async Task<IActionResult> Authenticate([FromBody] UserDto userDto)
+        public async Task<IActionResult> Authenticate([FromBody] AccountDto accountDto)
         {
-            var user = await _authService.Authenticate(userDto.Email, userDto.Password, ipAddress());
+            var account = await _authService.Authenticate(accountDto.Email, accountDto.Password, ipAddress());
 
-            if (user == null) return BadRequest(new { message = "Username or password is incorrect" });
+            if (account == null) return BadRequest(new { message = "Email or password is incorrect" });
 
-            setTokenCookie(user.RefreshToken);
+            setTokenCookie(account.RefreshToken);
 
             return Ok(new
             {
-                Email = user.Email,
-                Token = user.JwtToken
+                Email = account.Email,
+                Token = account.JwtToken
             });
         }
 
@@ -44,16 +44,16 @@ namespace FacilityManager.Api.Controllers
         public async Task<IActionResult> RefreshToken()
         {
             var refreshToken = Request.Cookies["refreshToken"];
-            var user = await _authService.RefreshToken(refreshToken, ipAddress());
+            var account = await _authService.RefreshToken(refreshToken, ipAddress());
 
-            if (user == null) return Unauthorized(new { message = "Invalid token" });
+            if (account == null) return Unauthorized(new { message = "Invalid token" });
 
-            setTokenCookie(user.RefreshToken);
+            setTokenCookie(account.RefreshToken);
 
             return Ok(new
             {
-                Email = user.Email,
-                Token = user.JwtToken
+                Email = account.Email,
+                Token = account.JwtToken
             });
         }
 

@@ -19,6 +19,46 @@ namespace FacilityManager.EntityFramework.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.0");
 
+            modelBuilder.Entity("FacilityManager.EntityFramework.Models.Account", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .UseIdentityColumn();
+
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("Guid")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsEmailVerified")
+                        .HasColumnType("bit");
+
+                    b.Property<byte[]>("PasswordHash")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<byte[]>("PasswordSalt")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("ResetPasswordToken")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Roles")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("VerificationEmailToken")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Account");
+                });
+
             modelBuilder.Entity("FacilityManager.EntityFramework.Models.Facility", b =>
                 {
                     b.Property<long>("Id")
@@ -42,57 +82,7 @@ namespace FacilityManager.EntityFramework.Migrations
                     b.ToTable("Facility");
                 });
 
-            modelBuilder.Entity("FacilityManager.EntityFramework.Models.User", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .UseIdentityColumn();
-
-                    b.Property<DateTime>("CreationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FirstName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("Guid")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("IsEmailVerified")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("LastName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<byte[]>("PasswordHash")
-                        .HasColumnType("varbinary(max)");
-
-                    b.Property<byte[]>("PasswordSalt")
-                        .HasColumnType("varbinary(max)");
-
-                    b.Property<string>("Phone")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ResetPasswordToken")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Roles")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("VerificationEmailToken")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("User");
-                });
-
-            modelBuilder.Entity("FacilityManager.EntityFramework.Models.User", b =>
+            modelBuilder.Entity("FacilityManager.EntityFramework.Models.Account", b =>
                 {
                     b.OwnsMany("FacilityManager.EntityFramework.Models.RefreshToken", "RefreshTokens", b1 =>
                         {
@@ -100,6 +90,9 @@ namespace FacilityManager.EntityFramework.Migrations
                                 .ValueGeneratedOnAdd()
                                 .HasColumnType("int")
                                 .UseIdentityColumn();
+
+                            b1.Property<long>("AccountId")
+                                .HasColumnType("bigint");
 
                             b1.Property<DateTime>("Created")
                                 .HasColumnType("datetime2");
@@ -122,17 +115,14 @@ namespace FacilityManager.EntityFramework.Migrations
                             b1.Property<string>("Token")
                                 .HasColumnType("nvarchar(max)");
 
-                            b1.Property<long>("UserId")
-                                .HasColumnType("bigint");
-
                             b1.HasKey("Id");
 
-                            b1.HasIndex("UserId");
+                            b1.HasIndex("AccountId");
 
                             b1.ToTable("RefreshToken");
 
                             b1.WithOwner()
-                                .HasForeignKey("UserId");
+                                .HasForeignKey("AccountId");
                         });
 
                     b.Navigation("RefreshTokens");
