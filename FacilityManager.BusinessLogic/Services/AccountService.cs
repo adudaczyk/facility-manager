@@ -41,7 +41,7 @@ namespace FacilityManager.BusinessLogic.Services
         {
             if (await _accountRepository.GetByEmail(accountDto.Email) != null)
             {
-                throw new AppException($"Account with email '{accountDto.Email}' already exist!");
+                throw new ArgumentException($"Account with email '{accountDto.Email}' already exist!");
             }
 
             var account = _mapper.Map<Account>(accountDto);
@@ -110,7 +110,7 @@ namespace FacilityManager.BusinessLogic.Services
         {
             var account = await _accountRepository.GetByEmail(email);
 
-            if (account == null) throw new AppException("Invalid email");
+            if (account == null) throw new ArgumentException("Invalid email");
 
             var token = GenerateRandomToken();
             account.ResetPasswordToken = token;
@@ -126,7 +126,10 @@ namespace FacilityManager.BusinessLogic.Services
         {
             var account = await _accountRepository.GetByEmail(accountDto.Email);
 
-            if (account == null || account.ResetPasswordToken != accountDto.ResetPasswordToken) throw new AppException("Invalid reset password token");
+            if (account == null || account.ResetPasswordToken != accountDto.ResetPasswordToken)
+            {
+                throw new ArgumentException("Invalid reset password token");
+            }
 
             _mapper.Map(accountDto, account);
             byte[] passwordHash, passwordSalt;
@@ -143,7 +146,10 @@ namespace FacilityManager.BusinessLogic.Services
         {
             var account = await _accountRepository.GetByEmail(accountDto.Email);
 
-            if (account == null || account.VerificationEmailToken != accountDto.VerificationEmailToken) throw new AppException("Invalid verification email token");
+            if (account == null || account.VerificationEmailToken != accountDto.VerificationEmailToken)
+            {
+                throw new ArgumentException("Invalid verification email token");
+            }
 
             account.IsEmailVerified = true;
             _accountRepository.Update(account);
@@ -159,31 +165,16 @@ namespace FacilityManager.BusinessLogic.Services
 
         private static void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
         {
-            if (string.IsNullOrWhiteSpace(password)) throw new AppException("Password cannot be empty or whitespace");
+            if (string.IsNullOrWhiteSpace(password))
+            {
+                throw new ArgumentException("Password cannot be empty or whitespace");
+            }
 
             using (var hmac = new System.Security.Cryptography.HMACSHA512())
             {
                 passwordSalt = hmac.Key;
                 passwordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
             }
-        }
-
-        private static bool VerifyPasswordHash(string password, byte[] storedHash, byte[] storedSalt)
-        {
-            if (string.IsNullOrWhiteSpace(password)) throw new AppException("Value cannot be empty or whitespace");
-            if (storedHash.Length != 64) throw new AppException("Invalid length of password hash (64 bytes expected).");
-            if (storedSalt.Length != 128) throw new AppException("Invalid length of password salt (128 bytes expected).");
-
-            using (var hmac = new System.Security.Cryptography.HMACSHA512(storedSalt))
-            {
-                var computedHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(password));
-                for (int i = 0; i < computedHash.Length; i++)
-                {
-                    if (computedHash[i] != storedHash[i]) return false;
-                }
-            }
-
-            return true;
         }
 
         private string GenerateRandomToken()

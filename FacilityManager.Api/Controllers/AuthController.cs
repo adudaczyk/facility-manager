@@ -26,11 +26,11 @@ namespace FacilityManager.Api.Controllers
         [HttpPost("authenticate")]
         public async Task<IActionResult> Authenticate([FromBody] AccountDto accountDto)
         {
-            var account = await _authService.Authenticate(accountDto.Email, accountDto.Password, ipAddress());
+            var account = await _authService.Authenticate(accountDto.Email, accountDto.Password, IPAddress());
 
             if (account == null) return BadRequest(new { message = "Email or password is incorrect" });
 
-            setTokenCookie(account.RefreshToken);
+            SetTokenCookie(account.RefreshToken);
 
             return Ok(new
             {
@@ -44,11 +44,11 @@ namespace FacilityManager.Api.Controllers
         public async Task<IActionResult> RefreshToken()
         {
             var refreshToken = Request.Cookies["refreshToken"];
-            var account = await _authService.RefreshToken(refreshToken, ipAddress());
+            var account = await _authService.RefreshToken(refreshToken, IPAddress());
 
             if (account == null) return Unauthorized(new { message = "Invalid token" });
 
-            setTokenCookie(account.RefreshToken);
+            SetTokenCookie(account.RefreshToken);
 
             return Ok(new
             {
@@ -65,14 +65,14 @@ namespace FacilityManager.Api.Controllers
 
             if (string.IsNullOrEmpty(token)) return BadRequest(new { message = "Token is required" });
 
-            var response = await _authService.RevokeToken(token, ipAddress());
+            var response = await _authService.RevokeToken(token, IPAddress());
 
             if (!response) return NotFound(new { message = "Token not found" });
 
             return Ok(new { message = "Token revoked" });
         }
 
-        private void setTokenCookie(string token)
+        private void SetTokenCookie(string token)
         {
             var cookieOptions = new CookieOptions
             {
@@ -82,7 +82,7 @@ namespace FacilityManager.Api.Controllers
             Response.Cookies.Append("refreshToken", token, cookieOptions);
         }
 
-        private string ipAddress()
+        private string IPAddress()
         {
             if (Request.Headers.ContainsKey("X-Forwarded-For"))
                 return Request.Headers["X-Forwarded-For"];

@@ -1,5 +1,4 @@
 ﻿using FacilityManager.Api.Models;
-using FacilityManager.BusinessLogic.Helpers;
 using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
@@ -31,11 +30,11 @@ namespace FacilityManager.Api
 
                 switch (ex)
                 {
-                    case AppException e:
-                        // custom application error
+                    case ArgumentException:
+                        // application error
                         response.StatusCode = (int)HttpStatusCode.BadRequest;
                         break;
-                    case KeyNotFoundException e:
+                    case KeyNotFoundException:
                         // not found error
                         response.StatusCode = (int)HttpStatusCode.NotFound;
                         break;
