@@ -41,7 +41,7 @@ namespace FacilityManager.BusinessLogic.Services
         {
             if (await _accountRepository.GetByEmail(accountDto.Email) != null)
             {
-                throw new ArgumentException($"Account with email {accountDto.Email} already exist!");
+                throw new AppException($"Account with email '{accountDto.Email}' already exist!");
             }
 
             var account = _mapper.Map<Account>(accountDto);
@@ -70,7 +70,7 @@ namespace FacilityManager.BusinessLogic.Services
 
             if (account == null)
             {
-                throw new KeyNotFoundException($"Cannot update account. Account with guid {account.Guid} does not exist");
+                throw new KeyNotFoundException($"Cannot update account. Account with guid '{account.Guid}' does not exist");
             }
 
             _mapper.Map(accountDto, account);
@@ -110,7 +110,7 @@ namespace FacilityManager.BusinessLogic.Services
         {
             var account = await _accountRepository.GetByEmail(email);
 
-            if (account == null) throw new ArgumentException("Invalid email");
+            if (account == null) throw new AppException("Invalid email");
 
             var token = GenerateRandomToken();
             account.ResetPasswordToken = token;
@@ -126,7 +126,7 @@ namespace FacilityManager.BusinessLogic.Services
         {
             var account = await _accountRepository.GetByEmail(accountDto.Email);
 
-            if (account == null || account.ResetPasswordToken != accountDto.ResetPasswordToken) throw new ArgumentException("Invalid token");
+            if (account == null || account.ResetPasswordToken != accountDto.ResetPasswordToken) throw new AppException("Invalid reset password token");
 
             _mapper.Map(accountDto, account);
             byte[] passwordHash, passwordSalt;
@@ -143,7 +143,7 @@ namespace FacilityManager.BusinessLogic.Services
         {
             var account = await _accountRepository.GetByEmail(accountDto.Email);
 
-            if (account == null || account.VerificationEmailToken != accountDto.VerificationEmailToken) throw new ArgumentException("Invalid token");
+            if (account == null || account.VerificationEmailToken != accountDto.VerificationEmailToken) throw new AppException("Invalid verification email token");
 
             account.IsEmailVerified = true;
             _accountRepository.Update(account);
@@ -159,8 +159,7 @@ namespace FacilityManager.BusinessLogic.Services
 
         private static void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
         {
-            if (password == null) throw new ArgumentNullException("password");
-            if (string.IsNullOrWhiteSpace(password)) throw new ArgumentException("Value cannot be empty or whitespace only string.", "password");
+            if (string.IsNullOrWhiteSpace(password)) throw new AppException("Password cannot be empty or whitespace");
 
             using (var hmac = new System.Security.Cryptography.HMACSHA512())
             {
@@ -171,10 +170,9 @@ namespace FacilityManager.BusinessLogic.Services
 
         private static bool VerifyPasswordHash(string password, byte[] storedHash, byte[] storedSalt)
         {
-            if (password == null) throw new ArgumentNullException("password");
-            if (string.IsNullOrWhiteSpace(password)) throw new ArgumentException("Value cannot be empty or whitespace only string.", "password");
-            if (storedHash.Length != 64) throw new ArgumentException("Invalid length of password hash (64 bytes expected).", "passwordHash");
-            if (storedSalt.Length != 128) throw new ArgumentException("Invalid length of password salt (128 bytes expected).", "passwordHash");
+            if (string.IsNullOrWhiteSpace(password)) throw new AppException("Value cannot be empty or whitespace");
+            if (storedHash.Length != 64) throw new AppException("Invalid length of password hash (64 bytes expected).");
+            if (storedSalt.Length != 128) throw new AppException("Invalid length of password salt (128 bytes expected).");
 
             using (var hmac = new System.Security.Cryptography.HMACSHA512(storedSalt))
             {

@@ -27,19 +27,8 @@ namespace FacilityManager.Api.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] AccountDto accountDto)
         {
-            try
-            {
                 await _accountService.CreateAccount(accountDto);
-                return Ok();
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, ex.Message);
-            }
+                return Ok("Register successfull!");
         }
 
         [AllowAnonymous]
@@ -63,90 +52,49 @@ namespace FacilityManager.Api.Controllers
         public async Task<IActionResult> UpdateAccount(string guid, [FromBody] AccountDto accountDto)
         {
             accountDto.Guid = new Guid(guid);
-            try
-            {
-                await _accountService.UpdateAccount(accountDto);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
+            await _accountService.UpdateAccount(accountDto);
+            return Ok();
         }
 
         [Authorize(Roles = Role.Admin)]
         [HttpDelete("{guid}")]
         public async Task<IActionResult> DeleteAccount(string guid)
         {
-            try
-            {
-                await _accountService.DeleteAccount(guid);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
+            await _accountService.DeleteAccount(guid);
+            return Ok();
         }
 
         [AllowAnonymous]
         [HttpPost("verify-email")]
         public async Task<IActionResult> VerifyEmail([FromBody] AccountDto accountDto)
         {
-            try
-            {
-                await _accountService.VerifyEmail(accountDto);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
+            await _accountService.VerifyEmail(accountDto);
+            return Ok();
         }
 
         [AllowAnonymous]
         [HttpPost("send-reset-password-link")]
         public async Task<IActionResult> SendResetPasswordLink(string email)
         {
-            try
-            {
-                await _accountService.SendResetPasswordLink(email);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
+            await _accountService.SendResetPasswordLink(email);
+            return Ok();
+            
         }
 
         [AllowAnonymous]
         [HttpPost("reset-password")]
         public async Task<IActionResult> ResetPassword([FromBody] AccountDto accountDto)
         {
-            try
-            {
-                await _accountService.ResetPassword(accountDto);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
+            await _accountService.ResetPassword(accountDto);
+            return Ok();
         }
 
         [AllowAnonymous]
         [HttpPost("email-lookup")]
         public async Task<IActionResult> EmailLookup(string email)
         {
-            try
-            {
-                var isEmailExisted = await _accountService.EmailLookup(email);
-                return Ok(isEmailExisted);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
+            var isEmailExisted = await _accountService.EmailLookup(email);
+            return Ok(isEmailExisted);
         }
     }
 }
