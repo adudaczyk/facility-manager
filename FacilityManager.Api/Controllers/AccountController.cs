@@ -32,9 +32,13 @@ namespace FacilityManager.Api.Controllers
                 await _accountService.CreateAccount(accountDto);
                 return Ok();
             }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
             catch (Exception ex)
             {
-                return BadRequest(new { message = ex.Message });
+                return StatusCode(500, ex.Message);
             }
         }
 
