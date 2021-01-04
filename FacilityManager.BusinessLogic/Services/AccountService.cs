@@ -110,7 +110,10 @@ namespace FacilityManager.BusinessLogic.Services
         {
             var account = await _accountRepository.GetByEmail(email);
 
-            if (account == null) throw new ArgumentException("Invalid email");
+            if (account == null)
+            {
+                throw new ArgumentException("Invalid email");
+            }
 
             var token = GenerateRandomToken();
             account.ResetPasswordToken = token;

@@ -3,8 +3,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using FacilityManager.BusinessLogic.Models;
 using FacilityManager.BusinessLogic.Services;
+using FacilityManager.Api.Models.Requests;
+using System.Security.Authentication;
 
 namespace FacilityManager.Api.Controllers
 {
@@ -13,30 +14,27 @@ namespace FacilityManager.Api.Controllers
     [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
-        private readonly IAccountService _accountService;
         private readonly IAuthService _authService;
 
-        public AuthController(IAccountService accountService, IAuthService authService)
+        public AuthController(IAuthService authService)
         {
-            _accountService = accountService;
             _authService = authService;
         }
 
         [AllowAnonymous]
         [HttpPost("authenticate")]
-        public async Task<IActionResult> Authenticate([FromBody] AccountDto accountDto)
+        public async Task<IActionResult> Authenticate([FromBody] AuthenticateRequest authRequest)
         {
-            var account = await _authService.Authenticate(accountDto.Email, accountDto.Password, IPAddress());
+            var auth = await _authService.Authenticate(authRequest.Email, authRequest.Password, IPAddress());
 
-            if (account == null) return BadRequest(new { message = "Email or password is incorrect" });
-
-            SetTokenCookie(account.RefreshToken);
-
-            return Ok(new
+            if (auth == null)
             {
-                Email = account.Email,
-                Token = account.JwtToken
-            });
+                throw new ArgumentException("Email or password is incorrect");
+            }
+
+            SetTokenCookie(auth.RefreshToken);
+
+            return Ok(auth);
         }
 
         [AllowAnonymous]
@@ -44,17 +42,16 @@ namespace FacilityManager.Api.Controllers
         public async Task<IActionResult> RefreshToken()
         {
             var refreshToken = Request.Cookies["refreshToken"];
-            var account = await _authService.RefreshToken(refreshToken, IPAddress());
+            var auth = await _authService.RefreshToken(refreshToken, IPAddress());
 
-            if (account == null) return Unauthorized(new { message = "Invalid token" });
-
-            SetTokenCookie(account.RefreshToken);
-
-            return Ok(new
+            if (auth == null)
             {
-                Email = account.Email,
-                Token = account.JwtToken
-            });
+                throw new AuthenticationException("Invalid token");
+            }
+
+            SetTokenCookie(auth.RefreshToken);
+
+            return Ok(auth);
         }
 
         [HttpPost("revoke-token")]
@@ -63,13 +60,19 @@ namespace FacilityManager.Api.Controllers
             // accept token from request body or cookie
             var token = refreshToken ?? Request.Cookies["refreshToken"];
 
-            if (string.IsNullOrEmpty(token)) return BadRequest(new { message = "Token is required" });
+            if (string.IsNullOrEmpty(token))
+            {
+                throw new ArgumentException("Token is required");
+            }
 
             var response = await _authService.RevokeToken(token, IPAddress());
 
-            if (!response) return NotFound(new { message = "Token not found" });
+            if (!response)
+            {
+                throw new ArgumentException("Token not found");
+            }
 
-            return Ok(new { message = "Token revoked" });
+            return Ok("Token revoked");
         }
 
         private void SetTokenCookie(string token)

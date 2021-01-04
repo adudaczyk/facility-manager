@@ -20,4 +20,8 @@
     <ProjectReference Include="..\FacilityManager.EntityFramework\FacilityManager.EntityFramework.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\Responses\" />
+  </ItemGroup>
+
 </Project>

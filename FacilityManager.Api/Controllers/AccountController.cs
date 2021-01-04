@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using FacilityManager.BusinessLogic;
 using FacilityManager.BusinessLogic.Models;
 using FacilityManager.BusinessLogic.Services;
@@ -15,12 +14,10 @@ namespace FacilityManager.Api.Controllers
     public class AccountController : ControllerBase
     {
         private readonly IAccountService _accountService;
-        private readonly IConfiguration _configuration;
 
-        public AccountController(IAccountService accountService, IConfiguration configuration)
+        public AccountController(IAccountService accountService)
         {
             _accountService = accountService;
-            _configuration = configuration;
         }
 
         [AllowAnonymous]
