@@ -37,16 +37,20 @@ namespace FacilityManager.Api.Controllers
         }
 
         [HttpPost]
-        public async Task CreateFacility([FromBody] FacilityDto facilityDto)
+        public async Task<string> CreateFacility([FromBody] FacilityDto facilityDto)
         {
             await _facilityService.CreateFacility(facilityDto);
+
+            return facilityDto.Name;
         }
 
         [HttpPut("{guid}")]
-        public async Task UpdateFacility(string guid, [FromBody] FacilityDto facilityDto)
+        public async Task<string> UpdateFacility(string guid, [FromBody] FacilityDto facilityDto)
         {
             facilityDto.Guid = new Guid(guid);
             await _facilityService.UpdateFacility(facilityDto);
+
+            return facilityDto.Name;
         }
 
         [HttpDelete("{guid}")]
